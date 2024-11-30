@@ -19,6 +19,57 @@ in with pkgs; rec {
 
   tarMinimal = gnutar.override { acl = null; };
 
+  oilsMinimal = stdenv.mkDerivation rec {
+    pname = "oils";
+    version = "0.24.0";
+
+    src = pkgs.fetchurl {
+      url = "http://www.oilshell.org/download/oils-for-unix-$version.tar.gz";
+      sha256 = "08bml5467vgshxj25chd6z9wq2xl5fg47ilbmjpyw22aifkmrly9";
+    };
+
+    #nativeBuildInputs = [
+    #  #glibc.static
+    #];
+
+    patchPhase = ''
+      patchShebangs _build
+      '';
+
+    configurePhase = ''
+      echo 'HAVE_READLINE=
+      READLINE_DIR=
+      PREFIX=$out
+      DATAROOTDIR=$out/share
+      STRIP_FLAGS=--gc-sections' > _build/detected-config.sh
+
+      echo '#define SIZEOF_INT
+      #define SIZEOF_LONG
+      #define SIZEOF_VOID_P
+      #define SIZEOF_SHORT
+      #define SIZEOF_FLOAT
+      #define SIZEOF_DOUBLE
+      #define SIZEOF_SIZE_T
+      #define SIZEOF_FPOS_T
+      #define SIZEOF_PID_T
+      #define SIZEOF_OFF_T
+      #define SIZEOF_TIME_T
+      #define HAVE_LONG_LONG 1
+      #define SIZEOF_LONG_LONG' > _build/detected_config.h
+
+      touch _build/detected-cpp-config.h
+      '';
+    buildPhase = ''
+      set -x
+      #sed -i "s/^link_flags=.*/link_flags='-static '/" build/ninja-rules-cpp.sh
+      export OILS_CXX_VERBOSE=1
+      _build/oils.sh
+      '';
+    installPhase = ''
+      ./install
+      '';
+  };
+
   busyboxMinimal = busybox.override {
     useMusl = lib.meta.availableOn stdenv.hostPlatform musl;
     enableStatic = true;
@@ -116,7 +167,9 @@ in with pkgs; rec {
         cp -d ${coreutilsMinimal.out}/bin/* $out/bin
         (cd $out/bin && rm vdir dir sha*sum pinky factor pathchk runcon shuf who whoami shred users)
 
-        cp ${bash.out}/bin/bash $out/bin
+        cp ${oilsMinimal}/bin/* $out/bin
+        ln -s oils-for-unix $out/bin/bash
+        #cp ${bash.out}/bin/bash $out/bin
         cp ${findutils.out}/bin/find $out/bin
         cp ${findutils.out}/bin/xargs $out/bin
         cp -d ${diffutils.out}/bin/* $out/bin
