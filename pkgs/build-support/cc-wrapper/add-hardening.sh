@@ -13,7 +13,7 @@ done
 # fortify3 implies fortify enablement - make explicit before
 # we filter unsupported flags because unsupporting fortify3
 # doesn't mean we should unsupport fortify too
-if [[ -n "${hardeningEnableMap[fortify3]-}" ]]; then
+if [[ -n "${hardeningEnableMap["fortify3"]-}" ]]; then
   hardeningEnableMap["fortify"]=1
 fi
 
@@ -27,7 +27,7 @@ for flag in @hardening_unsupported_flags@; do
 done
 
 # now make fortify and fortify3 mutually exclusive
-if [[ -n "${hardeningEnableMap[fortify3]-}" ]]; then
+if [[ -n "${hardeningEnableMap['fortify3']-}" ]]; then
   unset -v "hardeningEnableMap['fortify']"
 fi
 

@@ -636,8 +636,8 @@ checkFileset 'union (union (union ./x/a ./x/b) ./y/a) ./z/b'
 # unions should not stack overflow, even if many elements are passed
 tree=()
 for i in $(seq 1000); do
-    tree[$i/a]=1
-    tree[$i/b]=0
+    tree["$i/a"]=1
+    tree["$i/b"]=0
 done
 # This is actually really hard to test:
 # A lot of files would be needed to cause a stack overflow.
