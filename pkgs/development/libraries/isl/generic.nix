@@ -3,6 +3,7 @@
 , sha256
 , configureFlags ? []
 , patches ? []
+, postPatch ? ""
 }:
 
 { lib
@@ -22,6 +23,8 @@ stdenv.mkDerivation {
   };
 
   inherit patches;
+
+  inherit postPatch;
 
   strictDeps = true;
   depsBuildBuild = lib.optionals (lib.versionAtLeast version "0.24") [ buildPackages.stdenv.cc ];

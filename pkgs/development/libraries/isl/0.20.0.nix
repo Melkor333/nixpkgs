@@ -8,4 +8,9 @@ import ./generic.nix rec {
   configureFlags = [
     "--with-gcc-arch=generic" # don't guess -march=/mtune=
   ];
+  postPatch = ''
+    sed -i 's/(((grep/( ( (grep/g' configure
+    sed -i 's/((grep/( (grep/g' configure
+  '';
+
 }
