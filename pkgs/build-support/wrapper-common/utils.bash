@@ -42,15 +42,17 @@ mangleVarBool() {
     local -a role_suffixes=("$@")
 
     local outputVar="${var}_@suffixSalt@"
-    declare -gxi "${outputVar}+=0"
+    # If the variable doesn't exist, is empty or not an int, we set it to 0
+    if ! [[ "${!outputVar:-}" =~ ^[0-9]+$ ]]; then
+      # : $(( )) throws with bad variables but ignores the return value
+      : $(("${outputVar}"=0))
+    fi
+    declare -gx $outputVar
     for suffix in "${role_suffixes[@]}"; do
         local inputVar="${var}${suffix}"
         if [ -v "$inputVar" ]; then
-            # "1" in the end makes `let` return success error code when
-            # expression itself evaluates to zero.
-            # We don't use `|| true` because that would silence actual
-            # syntax errors from bad variable values.
-            let "${outputVar} |= ${!inputVar:-0}" "1"
+            # : $(( )) throws with bad variables but ignores the return value
+            : $(( ${outputVar} |= ${!inputVar:-0} ))
         fi
     done
 }

@@ -33,12 +33,12 @@ cInclude=1
 expandResponseParams "$@"
 
 declare -ag positionalArgs=()
-declare -i n=0
+n=0
 nParams=${#params[@]}
 while (( "$n" < "$nParams" )); do
     p=${params[n]}
     p2=${params[n+1]:-} # handle `p` being last one
-    n+=1
+    ((n+=1))
 
     case "$p" in
         -[cSEM] | -MM) dontLink=1 ;;
@@ -83,11 +83,11 @@ fi
 if [[ "${NIX_ENFORCE_PURITY:-}" = 1 && -n "$NIX_STORE" ]]; then
     kept=()
     nParams=${#params[@]}
-    declare -i n=0
+    n=0
     while (( "$n" < "$nParams" )); do
         p=${params[n]}
         p2=${params[n+1]:-} # handle `p` being last one
-        n+=1
+        ((n+=1))
 
         skipNext=false
         path=""
@@ -98,7 +98,7 @@ if [[ "${NIX_ENFORCE_PURITY:-}" = 1 && -n "$NIX_STORE" ]]; then
 
         if [[ -n $path ]] && badPath "$path"; then
             skip "$path"
-            $skipNext && n+=1
+            $skipNext && ((n+=1))
             continue
         fi
 

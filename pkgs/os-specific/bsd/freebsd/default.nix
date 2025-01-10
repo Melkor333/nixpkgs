@@ -37,7 +37,7 @@ let
     set -eu
 
     args=()
-    declare -i path_args=0
+    declare path_args=0
 
     while (( $# )); do
       if (( $# == 1 )); then
@@ -58,7 +58,7 @@ let
           ;;
         -*) args+=("$1") ;;
         *)
-          path_args+=1
+          ((path_args+=1))
           args+=("$1")
           ;;
       esac

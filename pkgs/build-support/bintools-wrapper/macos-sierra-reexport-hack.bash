@@ -10,8 +10,8 @@ if [ -n "@coreutils_bin@" ]; then
   PATH="@coreutils_bin@/bin"
 fi
 
-declare -ri recurThreshold=200
-declare -i overflowCount=0
+declare -r recurThreshold=200
+overflowCount=0
 
 declare -ar origArgs=("$@")
 
@@ -25,11 +25,11 @@ while (( $# )); do
             exit 1
             ;;
         -lazy_library | -reexport_library | -upward_library | -weak_library)
-            overflowCount+=1
+            ((overflowCount+=1))
             shift 2
             ;;
         -l* | *.so.* | *.dylib | -lazy-l* | -reexport-l* | -upward-l* | -weak-l*)
-            overflowCount+=1
+            ((overflowCount+=1))
             shift 1
             ;;
         *.a | *.o)
@@ -96,7 +96,7 @@ declare -a norm=()
         norm+=("$input")
     done
 
-declare -i leafCount=0
+leafCount=0
 declare lastLeaf=''
 declare -a childrenInputs=() trailingInputs=()
 while (( "${#norm[@]}" )); do
@@ -111,7 +111,7 @@ while (( "${#norm[@]}" )); do
         -reexport_library | -weak_library)
             childrenInputs+=("${norm[0]}" "${norm[1]}")
             if [[ "${norm[1]}" != "$lastLeaf" ]]; then
-                leafCount+=1
+                ((leafCount+=1))
                 lastLeaf="${norm[1]}"
             fi
             norm=("${norm[@]:2}")
@@ -119,7 +119,7 @@ while (( "${#norm[@]}" )); do
         *.so | *.dylib)
             childrenInputs+=(-reexport_library "${norm[0]}")
             if [[ "${norm[0]}" != "$lastLeaf" ]]; then
-                leafCount+=1
+                ((leafCount+=1))
                 lastLeaf="${norm[0]}"
             fi
             norm=("${norm[@]:1}")
@@ -186,14 +186,14 @@ fi
 
 # Split inputs between children
 declare -a child0Inputs=() child1Inputs=("${childrenInputs[@]}")
-let "countFirstChild = $leafCount / 2" || true
+((countFirstChild = $leafCount / 2)) || true
 lastLeaf=''
 while (( "$countFirstChild" )); do
     case "${child1Inputs[0]}" in
         -reexport_library | -weak_library)
             child0Inputs+=("${child1Inputs[0]}" "${child1Inputs[1]}")
             if [[ "${child1Inputs[1]}" != "$lastLeaf" ]]; then
-                let countFirstChild-=1 || true
+                ((countFirstChild-=1)) || true
                 lastLeaf="${child1Inputs[1]}"
             fi
             child1Inputs=("${child1Inputs[@]:2}")
@@ -201,7 +201,7 @@ while (( "$countFirstChild" )); do
         *.so | *.dylib)
             child0Inputs+=(-reexport_library "${child1Inputs[0]}")
             if [[ "${child1Inputs[0]}" != "$lastLeaf" ]]; then
-                let countFirstChild-=1 || true
+                ((countFirstChild-=1)) || true
                 lastLeaf="${child1Inputs[1]}"
             fi
             child1Inputs=("${child1Inputs[@]:2}")

@@ -37,24 +37,24 @@ if [[ "${NIX_ENFORCE_PURITY:-}" = 1 && -n "${NIX_STORE:-}"
         && ( -z "$NIX_IGNORE_LD_THROUGH_GCC_@suffixSalt@" || -z "${NIX_LINK_TYPE_@suffixSalt@:-}" ) ]]; then
     rest=()
     nParams=${#params[@]}
-    declare -i n=0
+    n=0
 
     while (( "$n" < "$nParams" )); do
         p=${params[n]}
-        p2=${params[n+1]:-} # handle `p` being last one
+        p2=${params[((n+1))]:-} # handle `p` being last one
         if [ "${p:0:3}" = -L/ ] && badPath "${p:2}"; then
             skip "${p:2}"
         elif [ "$p" = -L ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "$p" = -rpath ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "$p" = -dynamic-linker ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "$p" = -syslibroot ] && [ $p2 == // ]; then
             # When gcc is built on darwin --with-build-sysroot=/
             # produces '-syslibroot //' linker flag. It's a no-op,
             # which does not introduce impurities.
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "${p:0:10}" = /LIBPATH:/ ] && badPath "${p:9}"; then
             reject "${p:9}"
         # We need to not match LINK.EXE-style flags like
@@ -67,7 +67,7 @@ if [[ "${NIX_ENFORCE_PURITY:-}" = 1 && -n "${NIX_STORE:-}"
         else
             rest+=("$p")
         fi
-        n+=1
+        ((n+=1))
     done
     # Old bash empty array hack
     params=(${rest+"${rest[@]}"})
@@ -109,7 +109,8 @@ fi
 #   3. Choose 32-bit dynamic linker if needed
 declare -a libDirs
 declare -A libs
-declare -i relocatable=0 link32=0
+relocatable=0
+link32=0
 
 linkerOutput="a.out"
 

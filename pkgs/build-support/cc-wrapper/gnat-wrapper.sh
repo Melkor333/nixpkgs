@@ -41,7 +41,7 @@ nonFlagArgs=0
 # shellcheck disable=SC2193
 
 expandResponseParams "$@"
-declare -i n=0
+n=0
 nParams=${#params[@]}
 while (( "$n" < "$nParams" )); do
     p=${params[n]}
@@ -64,7 +64,7 @@ while (( "$n" < "$nParams" )); do
         # A dash alone signifies standard input; it is not a flag
         nonFlagArgs=1
     fi
-    n+=1
+    ((n+=1))
 done
 
 # If we pass a flag like -Wl, then gcc will call the linker unless it
@@ -80,32 +80,32 @@ fi
 if [[ "${NIX_ENFORCE_PURITY:-}" = 1 && -n "$NIX_STORE" ]]; then
     rest=()
     nParams=${#params[@]}
-    declare -i n=0
+    n=0
     while (( "$n" < "$nParams" )); do
         p=${params[n]}
         p2=${params[n+1]:-} # handle `p` being last one
         if [ "${p:0:3}" = -L/ ] && badPath "${p:2}"; then
             skip "${p:2}"
         elif [ "$p" = -L ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "${p:0:3}" = -I/ ] && badPath "${p:2}"; then
             skip "${p:2}"
         elif [ "$p" = -I ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "${p:0:4}" = -aI/ ] && badPath "${p:3}"; then
             skip "${p:3}"
         elif [ "$p" = -aI ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "${p:0:4}" = -aO/ ] && badPath "${p:3}"; then
             skip "${p:3}"
         elif [ "$p" = -aO ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         elif [ "$p" = -isystem ] && badPath "$p2"; then
-            n+=1; skip "$p2"
+            ((n+=1)); skip "$p2"
         else
             rest+=("$p")
         fi
-        n+=1
+        ((n+=1))
     done
     # Old bash empty array hack
     params=(${rest+"${rest[@]}"})

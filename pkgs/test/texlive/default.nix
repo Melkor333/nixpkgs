@@ -487,7 +487,7 @@ rec {
         enable -f "$loadables/realpath" realpath
         mkdir -p "$out"
         export HOME="$(mktemp -d)"
-        declare -i binCount=0 ignoredCount=0 brokenCount=0 failedCount=0
+        binCount=0 ignoredCount=0 brokenCount=0 failedCount=0
         cp "$contextTestTex" context-test.tex
         cp "$latexTestTex" latex-test.tex
         cp "$texTestTex" tex-test.tex
@@ -595,7 +595,7 @@ rec {
     runCommand "texlive-test-shebangs" { }
       (''
         echo "checking that all texlive scripts shebangs are in '$NIX_STORE'"
-        declare -i scriptCount=0 invalidCount=0
+        scriptCount=0 invalidCount=0
       '' +
       (lib.concatMapStrings
         (pkg: ''
