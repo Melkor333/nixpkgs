@@ -59,7 +59,7 @@ while (( "$n" < "$nParams" )); do
 
             # Any positional arg (i.e. any argument after `--`) will be
             # interpreted as a "non flag" arg:
-            if [[ -v "params[$n]" ]]; then nonFlagArgs=1; fi
+            if [[ -n "${params[$n]}" ]]; then nonFlagArgs=1; fi
 
             positionalArgs=("${params[@]:$n}")
             params=("${params[@]:0:$((n - 1))}")

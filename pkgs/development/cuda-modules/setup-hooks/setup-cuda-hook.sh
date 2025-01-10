@@ -25,7 +25,7 @@ extendcudaHostPathsSeen() {
 
     local markerPath="$1/nix-support/include-in-cudatoolkit-root"
     [[ ! -f "${markerPath}" ]] && return
-    [[ -v cudaHostPathsSeen[$1] ]] && return
+    [[ -n "${cudaHostPathsSeen[$1]}" ]] && return
 
     cudaHostPathsSeen["$1"]=1
 
