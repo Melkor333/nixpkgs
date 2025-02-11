@@ -19,7 +19,7 @@ fi
 
 # Remove unsupported flags.
 for flag in @hardening_unsupported_flags@; do
-  unset -v "hardeningEnableMap[$flag]"
+  unset -v 'hardeningEnableMap[$flag]'
   # fortify being unsupported implies fortify3 is unsupported
   if [[ "$flag" = 'fortify' ]] ; then
     unset -v "hardeningEnableMap['fortify3']"
