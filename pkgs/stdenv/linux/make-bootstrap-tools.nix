@@ -21,11 +21,11 @@ in with pkgs; rec {
 
   oilsMinimal = stdenv.mkDerivation rec {
     pname = "oils";
-    version = "0.24.0";
+    version = "0.37.0";
 
     src = pkgs.fetchurl {
-      url = "http://www.oilshell.org/download/oils-for-unix-$version.tar.gz";
-      sha256 = "08bml5467vgshxj25chd6z9wq2xl5fg47ilbmjpyw22aifkmrly9";
+      url = "https://oils.pub/download/oils-for-unix-${version}.tar.gz";
+      sha256 = "001hfkb6crmmziqvqraxjva0hnzjxn11y8xsskxvqgajl0h1vm7l";
     };
 
     #nativeBuildInputs = [
@@ -58,6 +58,8 @@ in with pkgs; rec {
       #define SIZEOF_LONG_LONG' > _build/detected_config.h
 
       touch _build/detected-cpp-config.h
+      echo ' #define HAVE_GLOB_PERIOD 1
+      #define HAVE_FNM_EXTMATCH 1' > _build/detected-cpp-config.h
       '';
     buildPhase = ''
       set -x
