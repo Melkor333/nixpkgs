@@ -1,0 +1,28 @@
+--- a/ld/scripttempl/elf.sc	2026-08-14 11:41:39.844006514 +0200
++++ b/ld/scripttempl/elf.sc	2026-08-14 11:42:30.833079616 +0200
+@@ -153,7 +153,7 @@
+ fi
+ if test -z "$PLT"; then
+   IPLT=".iplt         ${RELOCATING-0} : { *(.iplt) }"
+-  PLT=".plt          ${RELOCATING-0} : { *(.plt)${RELOCATING+${IREL_IN_PLT+ *(.iplt)}} }
++  PLT=".plt          ${RELOCATING-0} : { *(.plt)${RELOCATING+${IREL_IN_PLT+" *(.iplt)"}} }
+   ${IREL_IN_PLT-$IPLT}"
+ fi
+ test -n "${DATA_PLT-${BSS_PLT-text}}" && TEXT_PLT=
+@@ -495,14 +495,14 @@
+     {
+       *(.rel.plt)
+       ${IREL_IN_PLT+${RELOCATING+${CREATE_PIC-PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__rel_iplt_start = .);}}}
+-      ${IREL_IN_PLT+${RELOCATING+*(.rel.iplt)}}
++      ${IREL_IN_PLT+${RELOCATING+"*(.rel.iplt)"}}
+       ${IREL_IN_PLT+${RELOCATING+${CREATE_PIC-PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__rel_iplt_end = .);}}}
+     }
+   .rela.plt     ${RELOCATING-0} :
+     {
+       *(.rela.plt)
+       ${IREL_IN_PLT+${RELOCATING+${CREATE_PIC-PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__rela_iplt_start = .);}}}
+-      ${IREL_IN_PLT+${RELOCATING+*(.rela.iplt)}}
++      ${IREL_IN_PLT+${RELOCATING+"*(.rela.iplt)"}}
+       ${IREL_IN_PLT+${RELOCATING+${CREATE_PIC-PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__rela_iplt_end = .);}}}
+     }
+   ${OTHER_PLT_RELOC_SECTIONS}

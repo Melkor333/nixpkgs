@@ -94,6 +94,12 @@ stdenv.mkDerivation (finalAttrs: {
     # CVE-2023-1972 fix to bfd/elf.c from:
     # https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=c22d38baefc5a7a1e1f5cdc9dbb556b1f0ec5c57
     ./CVE-2023-1972.patch
+
+    # Oils shell cannot parse nested ${var+${other+ *(...)}} substitutions
+    # where the inner value starts with a glob character.  Quote the inner
+    # value to avoid the parse error, which otherwise produces empty linker
+    # scripts.  See https://oils.pub/ and ../oils-elf-sc-nested-glob.patch.
+    ./oils-elf-sc-nested-glob.patch
   ]
   ++ lib.optional targetPlatform.isiOS ./support-ios.patch
   # Adds AVR-specific options to "size" for compatibility with Atmel's downstream distribution
